@@ -13,6 +13,12 @@ CREATE TABLE products(
     PRIMARY KEY (product_id);
 );
 
+CREATE TABLE departments(
+department_id INT NOT NULL AUTO_INCREMENT,
+department_name VARCHAR(255) NULL,
+over_head_costs DECIMAL(7,2) NULL
+);
+
 
 INSERT INTO bamazon_db (product_name, department_name, price, stock_quantity) VALUES 
 ("Shoes", "Clothing",10,25);

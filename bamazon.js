@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+const cTable = require('console.table');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -20,11 +21,10 @@ connection.connect(function(err) {
 
 function readProducts(){
     console.log("Current Products\n");
-    let query = connection.query("SELECT * FROM products",function(err,res){
+    let query = connection.query("SELECT product_id,product_name,price FROM products",function(err,res){
         if(err) throw err;
-        console.log(res);
+        console.table(res);
     })
- 
 }
 
 function showOrder(itemChoice,itemqty){
@@ -34,16 +34,30 @@ function showOrder(itemChoice,itemqty){
     }],
     function(err,res){
         if(err) throw err;
-        console.log(
-            `Your Order Summary :
-            ${res[0].department_name}
-            ${itemqty} x ${res[0].product_name} - ${res[0].price}
-            Total: $ ${itemqty * res[0].price}
-
-            `
-            );
+        let total = itemqty * res[0].price;
+            console.table([
+                {
+                    product_id:itemChoice,
+                    item_name:res[0].product_name,
+                    price:res[0].price,
+                    quantity:itemqty,
+                    total:total
+                }
+            ]);
+            let query = connection.query("UPDATE products SET ? WHERE ?",
+        [{
+            product_sales: itemqty * res[0].price
+        },
+        {
+            product_id:itemChoice
+        }],
+        function(err,res){
+        if(err) throw err;
+        // console.log(res);
+    })
     }
     )
+    
 }
 
 function updateInventory(itemChoice,newInventory,itemqty){
@@ -80,6 +94,7 @@ function checkInventory(itemChoice,itemqty){
                 let newInventory = res[0].stock_quantity - itemqty;    
                 updateInventory(itemChoice,newInventory,itemqty);
                 console.log("Your Order has Been Submitted");
+                
             }
  
         }
