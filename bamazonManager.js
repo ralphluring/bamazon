@@ -57,6 +57,7 @@ function addNew(){
         let query = connection.query(sql,[values],function(err, response){
           if(err) throw err;
           console.log("Product Has been added to the database :) ");
+          mainMenu();
       });  
     });
 }
@@ -111,6 +112,7 @@ function addInv(){
                     function(err,res){
                         if(err)throw err;
                         console.log("product updated :) ");
+                        mainMenu();
                     })
                 })
             })
@@ -124,22 +126,30 @@ function mainMenu(){
         name: "main",
         type: "list",
         message: "MAIN MENU",
-        choices:["View Products for Sale","View Low Inventory","Add to Inventory", "Add New Product"]
+        choices:["View Products for Sale","View Low Inventory","Add to Inventory", "Add New Product","exit"]
     }]).then(function(answer) {
         switch (answer.main) {
             case "View Products for Sale":
                 readAll();
+                mainMenu();
                 break;
             case "Add New Product":
                 addNew();
+               
                 break;
             case "View Low Inventory":
                 viewLow();
+                mainMenu();
                 break;
             case "Add to Inventory":
                 addInv();
+                
+                break;
+            case "exit":
+                connection.end();
                 break;
         }  
+       
     });  
 }
 

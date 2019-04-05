@@ -22,7 +22,7 @@ connection.connect(function(err) {
 
 function departmentView(){
     let query = connection.query(
-        'SELECT COUNT(product_sales) FROM products GROUP BY department_name ORDER BY COUNT(product_sales) DESC ',
+        'select p.department_name, sum(product_sales), over_head_costs from products p left join departments d on d.department_name = p.department_name group by p.department_name, over_head_costs',
     function(err,res){
         console.table(res);
     })
@@ -48,6 +48,7 @@ function mainMenu(){
             case "Create New Department":
                 newDepartment();
                 break;
-        }  
+        } 
+        connection.end(); 
     });  
 }
